@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Todo App with Strikeout</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      padding: 30px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+      margin-right: 10px;
+      border: 2px solid #90caf9;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #42a5f5;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #42a5f5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #1e88e5;
+      transform: scale(1.05);
+    }
+
+    #todos {
+      margin-top: 30px;
+    }
+
+    #todos > div {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 8px solid #42a5f5;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #todos h1 {
+      font-size: 18px;
+      margin: 0;
+      flex-grow: 1;
+      color: #333;
+    }
+
+    #todos h1.completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    #todos input[type="text"] {
+      flex-grow: 1;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    #todos button {
+      margin-left: 5px;
+    }
+
+    /* Specific colors for different buttons */
+    #todos button:nth-child(2) {
+      background-color: #f31e1a; /* Delete */
+    }
+
+    #todos button:nth-child(2):hover {
+      background-color: #da3734;
+    }
+
+    #todos button:nth-child(3) {
+      background-color: #f13939; /* Edit */
+    }
+
+    #todos button:nth-child(3):hover {
+      background-color: #fb0000;
+    }
+
+    #todos button:last-child {
+      background-color: #66bb6a; /* Save */
+    }
+
+    #todos button:last-child:hover {
+      background-color: #43a047;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" />
+  <button onclick="addTodo()">Add todo!</button>
+  <button onclick="deleteFirstTodo()">Delete first todo</button>
+  <button onclick="deleteLastTodo()">Delete last todo</button>
+  <button onclick="deleteAllTodo()">Delete all todo</button>
+
+  <div id="todos"></div>
+
+  <script>
+    let todos = [];
+
+    function addTodo() {
+      const inputValue = document.querySelector("input").value.trim();
+      if (inputValue === "") return;
+      todos.push({ title: inputValue, completed: false });
+      document.querySelector("input").value = "";
+      render();
+    }
+
+    function deleteLastTodo() {
+      todos.pop();
+      render();
+    }
+
+    function deleteFirstTodo() {
+      todos.splice(0, 1);
+      render();
+    }
+
+    function deleteAllTodo() {
+      todos.length = 0;
+      render();
+    }
+
+    function deleteel(event) {
+      const todoTitle = event.target.getAttribute("id");
+      const index = todos.findIndex(todo => todo.title === todoTitle);
+      if (index > -1) {
+        todos.splice(index, 1);
+        render();
+      }
+    }
+
+    function editel(event) {
+      const index = event.target.dataset.index;
+      const todo = todos[index];
+      const div = document.getElementById(`todo-${index}`);
+      div.innerHTML = "";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = todo.title;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.addEventListener("click", function () {
+        const newTitle = input.value.trim();
+        if (newTitle !== "") {
+          todos[index].title = newTitle;
+          render();
+        }
+      });
+
+      div.appendChild(input);
+      div.appendChild(saveBtn);
+    }
+
+    function createTodoComponent(todo, i) {
+      const div = document.createElement("div");
+      div.id = `todo-${i}`;
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = todo.completed;
+      checkbox.addEventListener("change", () => {
+        todos[i].completed = checkbox.checked;
+        render();
+      });
+
+      const h1 = document.createElement("h1");
+      h1.textContent = todo.title;
+      h1.className = todo.completed ? "completed" : "";
+
+      const delbutton = document.createElement("button");
+      delbutton.textContent = "Delete";
+      delbutton.id = todo.title;
+      delbutton.addEventListener("click", deleteel);
+
+      const editbutton = document.createElement("button");
+      editbutton.textContent = "Edit todo";
+      editbutton.dataset.index = i;
+      editbutton.addEventListener("click", editel);
+
+      div.appendChild(checkbox);
+      div.appendChild(h1);
+      div.appendChild(delbutton);
+      div.appendChild(editbutton);
+
+      return div;
+    }
+
+    function render() {
+      const todosContainer = document.querySelector("#todos");
+      todosContainer.innerHTML = "";
+      for (let i = 0; i < todos.length; i++) {
+        const element = createTodoComponent(todos[i], i);
+        todosContainer.appendChild(element);
+      }
+    }
+  </script>
+</body>
+</html>
