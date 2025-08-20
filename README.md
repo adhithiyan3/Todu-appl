@@ -64,6 +64,12 @@ No build tools or servers required 🚀
 5.  Todos are saved automatically in **localStorage**
 
 ------------------------------------------------------------------------
+## 📂 Repository
+
+You can view the source code here:  
+[Todo App Repository](https://adhithiyan3.github.io/Todu-appl/)
+
+---
 
 ## 📸 Preview
 ![Todo App Screenshot](./image.png)
